@@ -2,3 +2,4 @@ infra/minio
 infra/postgres/data
 infra/minio/data
 .env
+__pycache__

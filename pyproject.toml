@@ -1,0 +1,23 @@
+[project]
+name = "newsforge"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Mateus Gurgel",email = "mateusgurgel15@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "python-dotenv (>=1.1.0,<2.0.0)",
+    "boto3 (>=1.38.23,<2.0.0)",
+    "pyspark (==3.4.1)",
+    "prefect (>=3.4.3,<4.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "newsforge", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

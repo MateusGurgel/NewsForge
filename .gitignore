@@ -1,0 +1,4 @@
+infra/minio
+infra/postgres/data
+infra/minio/data
+.env

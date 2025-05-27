@@ -5,6 +5,5 @@ load_dotenv()
 
 S3_ENDPOINT = os.getenv("S3_ENDPOINT")
 BUCKET = os.getenv("BUCKET")
-PREFIX = os.getenv("PREFIX")
-S3_PASSWORD = os.getenv("S3_PASSWORD")
-S3_KEY = os.getenv("S3_KEY")
+AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")

@@ -2,7 +2,6 @@ CREATE TABLE news
 (
     id            SERIAL PRIMARY KEY,
     title         TEXT NOT NULL,
-    url           TEXT NOT NULL,
     origin        TEXT NOT NULL,
     resume        TEXT NOT NULL,
     transcription TEXT NOT NULL,
@@ -17,5 +16,5 @@ CREATE TABLE image
     FOREIGN KEY (news_id) REFERENCES news (id)
 );
 
-INSERT INTO news (title, url, origin, resume, transcription)
-VALUES ('Exemplo de notícia', 'https://example.com', 'Example Origin', 'Example Resume', 'Example Transcription');
+INSERT INTO news (title, origin, resume, transcription)
+VALUES ('Exemplo de notícia', 'Example Origin', 'Example Resume', 'Example Transcription');

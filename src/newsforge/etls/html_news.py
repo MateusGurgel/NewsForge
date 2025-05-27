@@ -1,7 +1,8 @@
+from prefect.server.schemas.schedules import CronSchedule
 from pyspark.sql import Row
 from prefect import flow, task
 from pyspark.sql import SparkSession
-from newsforge.env import S3_ENDPOINT, BUCKET
+from newsforge.env import S3_ENDPOINT, BUCKET, DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD
 from pyspark.sql.types import StructType, StructField, StringType
 
 
@@ -47,15 +48,13 @@ def transform_data():
 
     df.write \
         .format("jdbc") \
-        .option("url", "jdbc:postgresql://127.0.0.1:5432/newsForge") \
+        .option("url", DATABASE_URL) \
+        .option("user", DATABASE_USER) \
+        .option("password", DATABASE_PASSWORD) \
         .option("dbtable", "news") \
-        .option("user", "admin") \
-        .option("password", "admin") \
         .option("driver", "org.postgresql.Driver") \
         .mode("append") \
         .save()
-
-    df.show()
 
     spark.stop()
 

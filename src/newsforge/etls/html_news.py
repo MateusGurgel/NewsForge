@@ -1,16 +1,38 @@
-from prefect.server.schemas.schedules import CronSchedule
+from bs4 import BeautifulSoup
 from pyspark.sql import Row
 from prefect import flow, task
 from pyspark.sql import SparkSession
 from newsforge.env import S3_ENDPOINT, BUCKET, DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD
 from pyspark.sql.types import StructType, StructField, StringType
 
+from newsforge.models import gemini_flash
+from newsforge.models.gemini_flash import GeminiFlash
+
+
+def get_html_content(html_news: str) -> str:
+    soup = BeautifulSoup(html_news, 'html.parser')
+
+    tags = soup.find_all(['p', 'h1', 'h2', 'h3'])
+
+    result = ""
+
+    for tag in tags:
+        result += tag.text.strip() + "\n"
+
+    return result
+
+def get_structured_data(html_news: str):
+    pass
 
 def extract_data(html_news: str):
-    # Essa parte será feita posteriormente, pois ainda não decidir se vou usar LLMs para o processamento, ou só BFS.
+    content_str: str = get_html_content(html_news)
 
-    print("Noticia ingerida: ", html_news)
-    return Row(title="Exemplo de notícia", origin="Example Origin", resume="Example Resume", transcription="Example Transcription")
+
+    system_prompt: str = "You are a information extractor. Your task is to extract the required information from a news article."
+    g_flash = GeminiFlash()
+    result = g_flash.handle(system_prompt, content_str)
+
+    return Row(title=result["title"], origin=result["news_origin"], resume=result["resume"], transcription=result["transcription"])
 
 @task()
 def transform_data():
@@ -45,6 +67,8 @@ def transform_data():
     ])
 
     df = spark.createDataFrame(dados, schema)
+
+    df.show()
 
     df.write \
         .format("jdbc") \

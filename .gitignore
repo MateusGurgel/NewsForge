@@ -1,5 +1,5 @@
-infra/minio
-infra/postgres/data
-infra/minio/data
+compose/minio
+compose/postgres/data
+compose/minio/data
 .env
 __pycache__

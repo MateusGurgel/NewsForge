@@ -13,7 +13,11 @@ dependencies = [
     "pyspark (==3.4.1)",
     "prefect (>=3.4.3,<4.0.0)",
     "beautifulsoup4 (>=4.13.4,<5.0.0)",
-    "google-genai (>=1.19.0,<2.0.0)"
+    "google-genai (>=1.19.0,<2.0.0)",
+    "pandas (>=2.3.0,<3.0.0)",
+    "pyarrow (>=20.0.0,<21.0.0)",
+    "grpcio (>=1.72.1,<2.0.0)",
+    "protobuf (>=6.31.1,<7.0.0)"
 ]
 
 [tool.poetry]

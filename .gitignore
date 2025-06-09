@@ -4,3 +4,4 @@ compose/minio/data
 __pycache__
 compose/zookeeper/data
 compose/kafka/
+compose

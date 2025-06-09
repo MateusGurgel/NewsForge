@@ -18,3 +18,9 @@ CREATE TABLE image
 
 INSERT INTO news (title, origin, resume, transcription)
 VALUES ('Exemplo de notícia', 'Example Origin', 'Example Resume', 'Example Transcription');
+
+CREATE USER batch WITH PASSWORD 'batchbatch';
+REVOKE ALL ON SCHEMA public FROM batch;
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM batch;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM batch;
+GRANT INSERT ON TABLE news TO batch;

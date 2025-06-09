@@ -3,3 +3,5 @@ compose/postgres/data
 compose/minio/data
 .env
 __pycache__
+compose/zookeeper/data
+compose/kafka/

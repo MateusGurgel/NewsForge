@@ -15,7 +15,7 @@ def info_stream():
         .config("spark.hadoop.fs.s3a.proxy.port", "9000") \
         .config("spark.hadoop.fs.s3a.path.style.access", "true") \
         .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false") \
-        .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.3.4,org.postgresql:postgresql:42.6.0") \
+        .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.3.4,org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0") \
         .getOrCreate()
 
     df = spark.readStream \
@@ -29,10 +29,17 @@ def info_stream():
         count("file").alias("lines_read")
     )
 
-    query = result.writeStream \
-        .outputMode("complete") \
-        .format("console") \
+    result_to_send = result.selectExpr(
+        "CAST(null AS STRING) AS key",
+        "to_json(struct(files_read, lines_read)) AS value"
+    )
+
+    query = result_to_send.writeStream \
+        .format("kafka") \
+        .option("kafka.bootstrap.servers", "localhost:9093") \
+        .option("topic", "info-news") \
         .option("checkpointLocation", f"s3a://{BUCKET}/checkpoints/s3-stream/") \
+        .outputMode("complete") \
         .start()
 
     query.awaitTermination()

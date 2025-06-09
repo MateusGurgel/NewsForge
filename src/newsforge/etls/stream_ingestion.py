@@ -1,9 +1,10 @@
+from prefect import flow, task
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import input_file_name, count, approx_count_distinct
 
 from newsforge.env import S3_ENDPOINT, BUCKET
 
-
+@task()
 def info_stream():
     spark = SparkSession.builder \
         .appName("ProcessHTMLS3") \
@@ -36,5 +37,10 @@ def info_stream():
 
     query.awaitTermination()
 
-if __name__ == "__main__":
+
+@flow(name="STREAM INGESTION")
+def stream_ingestion():
     info_stream()
+
+if __name__ == "__main__":
+    stream_ingestion()

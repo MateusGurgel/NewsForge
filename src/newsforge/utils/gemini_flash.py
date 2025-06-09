@@ -1,10 +1,8 @@
-import base64
-import os
 import json
 from google import genai
 from google.genai import types
 
-from newsforge.env import GEMINI_API_KEY
+from newsforge.utils.env import GEMINI_API_KEY
 
 
 class GeminiFlash:

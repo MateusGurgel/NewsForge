@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 from pyspark.sql import Row
 from prefect import flow, task
 from pyspark.sql import SparkSession
-from newsforge.env import S3_ENDPOINT, BUCKET, DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD, PROCESSED_BUCKET, \
-    AWS_SECRET_KEY, AWS_SECRET_ACCESS_KEY
+from newsforge.utils.env import S3_ENDPOINT, S3_BUCKET, BATCH_DATABASE_URL, BATCH_DATABASE_USER, BATCH_DATABASE_PASSWORD, \
+    BATCH_S3_SECRET_KEY, BATCH_S3_ACCESS_KEY, S3_PROXY_HOST, S3_PROXY_PORT, SPEED_S3_SECRET_KEY, SPEED_S3_ACCESS_KEY
 from pyspark.sql.types import StructType, StructField, StringType
-from newsforge.models.gemini_flash import GeminiFlash
+from newsforge.utils.gemini_flash import GeminiFlash
 from botocore.client import Config
 
 
@@ -33,7 +33,7 @@ def extract_data(html_news: str):
 
     return Row(title=result["title"], origin=result["news_origin"], resume=result["resume"], transcription=result["transcription"])
 
-def list_files(s3, prefix=None, bucket=BUCKET):
+def list_files(s3, prefix=None, bucket=S3_BUCKET):
     paginator = s3.get_paginator("list_objects_v2")
     page_iterator = paginator.paginate(Bucket=bucket, Prefix=prefix)
 
@@ -52,10 +52,11 @@ def transform_data():
     spark = SparkSession.builder \
         .appName("ProcessHTMLS3") \
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
-        .config("spark.hadoop.fs.s3a.aws.credentials.provider", "com.amazonaws.auth.DefaultAWSCredentialsProviderChain") \
         .config("spark.hadoop.fs.s3a.endpoint", S3_ENDPOINT) \
-        .config("spark.hadoop.fs.s3a.proxy.host", "127.0.0.1") \
-        .config("spark.hadoop.fs.s3a.proxy.port", "9000") \
+        .config("spark.hadoop.fs.s3a.proxy.host", S3_PROXY_HOST) \
+        .config("spark.hadoop.fs.s3a.proxy.port", S3_PROXY_PORT) \
+        .config("spark.hadoop.fs.s3a.secret.key", BATCH_S3_SECRET_KEY) \
+        .config("spark.hadoop.fs.s3a.access.key", BATCH_S3_ACCESS_KEY) \
         .config("spark.hadoop.fs.s3a.path.style.access", "true") \
         .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false") \
         .config("spark.jars.packages", "org.apache.hadoop:hadoop-aws:3.3.4,org.postgresql:postgresql:42.6.0") \
@@ -63,7 +64,7 @@ def transform_data():
 
     print("Spark Session Iniciada")
 
-    rdd = spark.sparkContext.wholeTextFiles(f"s3a://{BUCKET}/unprocessed/*.html")
+    rdd = spark.sparkContext.wholeTextFiles(f"s3a://{S3_BUCKET}/unprocessed/*.html")
 
     htmls = rdd.toDF(["path", "value"])
 
@@ -82,9 +83,9 @@ def transform_data():
 
     df.write \
         .format("jdbc") \
-        .option("url", DATABASE_URL) \
-        .option("user", DATABASE_USER) \
-        .option("password", DATABASE_PASSWORD) \
+        .option("url", BATCH_DATABASE_URL) \
+        .option("user", BATCH_DATABASE_USER) \
+        .option("password", BATCH_DATABASE_PASSWORD) \
         .option("dbtable", "news") \
         .option("driver", "org.postgresql.Driver") \
         .mode("append") \
@@ -97,8 +98,8 @@ def move_data_to_processed():
 
     s3 = boto3.client(
         "s3",
-        aws_access_key_id=AWS_SECRET_ACCESS_KEY,
-        aws_secret_access_key=AWS_SECRET_KEY,
+        aws_access_key_id=BATCH_S3_ACCESS_KEY,
+        aws_secret_access_key=BATCH_S3_SECRET_KEY,
         endpoint_url=S3_ENDPOINT,
         config=Config(signature_version='s3v4'),
     )
@@ -111,11 +112,11 @@ def move_data_to_processed():
 
     for file in unprocessed_files:
         s3.copy_object(
-            Bucket=BUCKET,
-            CopySource=f"{BUCKET}/{file}",
+            Bucket=S3_BUCKET,
+            CopySource=f"{S3_BUCKET}/{file}",
             Key=file.replace("unprocessed/", "processed/"),
         )
-        s3.delete_object(Bucket=BUCKET, Key=file)
+        s3.delete_object(Bucket=S3_BUCKET, Key=file)
 
 @flow(name="ETL HTML News")
 def batch():

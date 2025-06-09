@@ -1,4 +1,3 @@
-compose/minio
 compose/postgres/data
 compose/minio/data
 .env

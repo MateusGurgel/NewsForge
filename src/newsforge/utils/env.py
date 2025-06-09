@@ -1,0 +1,29 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+# BATCH LAYER
+
+BATCH_S3_SECRET_KEY = os.getenv("BATCH_S3_SECRET_KEY")
+BATCH_S3_ACCESS_KEY = os.getenv("BATCH_S3_ACCESS_KEY")
+
+BATCH_DATABASE_URL = os.getenv("BATCH_DATABASE_URL")
+BATCH_DATABASE_USER = os.getenv("BATCH_DATABASE_USER")
+BATCH_DATABASE_PASSWORD = os.getenv("BATCH_DATABASE_PASSWORD")
+
+# SPEED LAYER
+
+SPEED_S3_SECRET_KEY = os.getenv("SPEED_S3_SECRET_KEY")
+SPEED_S3_ACCESS_KEY = os.getenv("SPEED_S3_ACCESS_KEY")
+
+# UNIVERSAL
+
+KAFKA_BROKER = os.getenv("KAFKA_BROKER")
+S3_PROXY_HOST = os.getenv("S3_HOST")
+S3_PROXY_PORT = os.getenv("S3_PORT")
+S3_ENDPOINT = os.getenv("S3_ENDPOINT")
+S3_BUCKET = os.getenv("S3_BUCKET")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+

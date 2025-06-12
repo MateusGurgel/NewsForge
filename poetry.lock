@@ -1284,6 +1284,26 @@ files = [
 referencing = ">=0.31.0"
 
 [[package]]
+name = "kafka-python"
+version = "2.2.11"
+description = "Pure Python client for Apache Kafka"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "kafka_python-2.2.11-py2.py3-none-any.whl", hash = "sha256:c285ce322108382ea9fd62273aab175d9a6959866145cf7cf9d4ca447b632372"},
+    {file = "kafka_python-2.2.11.tar.gz", hash = "sha256:8ff8bcc158f48b47ba516536a5b1287db75a8ceff13d639da917ec52e171acde"},
+]
+
+[package.extras]
+benchmarks = ["pyperf"]
+crc32c = ["crc32c"]
+lz4 = ["lz4"]
+snappy = ["python-snappy"]
+testing = ["mock ; python_version < \"3.3\"", "pytest", "pytest-mock", "pytest-timeout"]
+zstd = ["zstandard"]
+
+[[package]]
 name = "mako"
 version = "1.3.10"
 description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
@@ -4041,4 +4061,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.14"
-content-hash = "36bef501c7a222dca63815dcd24242e6d775ba817916d337aa93fe1c09fa0f3b"
+content-hash = "a58020c829646b6d51737c0601085ec49d2544d071ebc300a4300cf1c6eb1f58"

@@ -107,17 +107,6 @@ if st.session_state.messages:
 else:
     st.info("Nenhuma mensagem recebida ainda. Clique em 'Atualizar Mensagens' ou envie mensagens para o tópico Kafka.")
 
-if st.session_state.messages:
-    st.subheader("📊 Estatísticas")
-
-    messages_per_minute = {}
-    for msg in st.session_state.messages:
-        minute_key = msg['timestamp'].strftime('%H:%M')
-        messages_per_minute[minute_key] = messages_per_minute.get(minute_key, 0) + 1
-
-    if messages_per_minute:
-        st.bar_chart(messages_per_minute)
-
 st.sidebar.markdown("---")
 if "consumer" in st.session_state:
     st.sidebar.success("🟢 Conectado ao Kafka")

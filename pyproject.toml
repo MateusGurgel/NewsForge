@@ -19,7 +19,8 @@ dependencies = [
     "grpcio (>=1.72.1,<2.0.0)",
     "protobuf (>=6.31.1,<7.0.0)",
     "streamlit (>=1.45.1,<2.0.0)",
-    "st-pages (>=1.0.1,<2.0.0)"
+    "st-pages (>=1.0.1,<2.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)"
 ]
 
 [tool.poetry]
